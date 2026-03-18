@@ -4,27 +4,27 @@ const campsiteSchema = new mongoose.Schema(
   {
     name: { 
       type: String, 
-      required: [true, "Le nom du camping est requis"] 
+      required: [true, "Le nom du site de camping est requis"] 
     },
     location: { 
       type: String,
-      required: [true, "La location du camping est requis"] 
+      required: [true, "La location site de du camping est requis"] 
     },
     description: { type: String },
     type: {
       type: String,
       enum: ["tente", "rv", "chalet", "glamping", "arrière-pays", "autre"],
-      required: [true, "Le type du camping est requis"] 
+      required: [true, "Le type du site de camping est requis"] 
     },
     pricePerNight: { 
       type: Number,
-      required: [true, "Le prix par nuit du camping est requis"],
+      required: [true, "Le prix par nuit du site de camping est requis"],
       min: [1, "Le prix par nuit doit être suppérieur à 0."]
     },
     capacity: { 
       type: Number,
-      required: [true, "La capacité du camping est requis"],
-      min: [1, "La capacité du camping doit être suppérieur à 0."] 
+      required: [true, "La capacité du site de camping est requis"],
+      min: [1, "La capacité du site de site de camping doit être suppérieur à 0."] 
     },
     maxVehicleLength: {
       type: Number,
