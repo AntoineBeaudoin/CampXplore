@@ -19,8 +19,14 @@ mongoose
 
 // Routes
 import dbRoutes from "./routes/db.mjs";
+import authRoutes from "./routes/auth.mjs";
+import campsitesRoutes from "./routes/campsites.mjs";
+import reservationsRoutes from "./routes/reservations.mjs";
 
 app.use("/api/db", dbRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/campsites", campsitesRoutes);
+app.use("/api/reservations", reservationsRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
