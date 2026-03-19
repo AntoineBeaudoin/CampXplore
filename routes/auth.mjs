@@ -3,14 +3,14 @@ import * as authController from "../controllers/authController.mjs";
 
 const routeur = express.Router();
 
-routeur.post("/auth/register", authController.register);
+routeur.post("/register", authController.register);
 
-routeur.post("/auth/login", authController.login);
+routeur.post("/login", authController.login);
 
-routeur.get("/auth/profile", authController.getProfile);
+routeur.get("/profile", authController.getProfile);
 
-routeur.put("/auth/profile", authController.updateProfile);
+routeur.put("/profile", authController.updateProfile);
 
-routeur.patch("/auth/password", authController.updatePassword);
+routeur.patch("/password", authController.updatePassword);
 
 export default routeur;
