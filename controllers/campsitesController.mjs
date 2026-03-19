@@ -1,4 +1,4 @@
-import Campsites from "../models/campsite.js";
+import Campsites from "../models/campsite.mjs";
 
 export async function ajoutCampsite(req, res){
 }

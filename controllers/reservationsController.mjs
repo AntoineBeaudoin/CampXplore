@@ -1,4 +1,4 @@
-import Reservation from "../models/reservation.js";
+import Reservation from "../models/reservation.mjs";
 
 export async function ajoutReservation(req, res){
 }
