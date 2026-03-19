@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const campsiteSchema = new mongoose.Schema(
   {
@@ -51,4 +51,4 @@ const campsiteSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-module.exports = mongoose.model("Campsite", campsiteSchema);
+export default mongoose.model("Campsite", campsiteSchema);
