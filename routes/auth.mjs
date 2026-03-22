@@ -1,9 +1,10 @@
 import express from "express";
 import * as authController from "../controllers/authController.mjs";
+import {validateUserRegister} from "../middleware/validateUser.mjs"
 
 const routeur = express.Router();
 
-routeur.post("/register", authController.register);
+routeur.post("/register", validateUserRegister, authController.register);
 
 routeur.post("/login", authController.login);
 

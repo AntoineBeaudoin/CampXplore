@@ -1,8 +1,7 @@
 import User from "../models/user.mjs";
 
-export async function register(req, res){
+export async function register(req, res, next){
     const {firstName, lastName, email, password, phone, role} = req.body;
-
     const user = new User({
         firstName,
         lastName,
@@ -11,19 +10,23 @@ export async function register(req, res){
         phone,
         role
     });
-
     try{
         await user.save();
+        res.location(`/auth/${user._id}`)
+        const userAfficher = user.toObject();
+        delete userAfficher.password;
         res.status(201).json({
+            status: 201,
             message : "Compte utilisateur créer avec succès",
-            data: article
+            path: req.originalUrl,
+            timestamp: new Date().toISOString(),
+            data: {
+                user: userAfficher
+            }
         });
     }
     catch(err){
-        res.status(500).json({
-            message : "Erreur lors de la création d'un compte",
-            error: err.message,
-        });
+        next(err);
     }
 }
 
