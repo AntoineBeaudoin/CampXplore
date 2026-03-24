@@ -2,15 +2,18 @@ import User from "../models/user.mjs";
 
 export async function register(req, res, next){
     const {firstName, lastName, email, password, phone, role} = req.body;
-    const user = new User({
-        firstName,
-        lastName,
-        email,
-        password,
-        phone,
-        role
-    });
     try{
+        const hashedPassword = await bcrypt.hash(password, 12);
+        
+        const user = new User({
+            firstName,
+            lastName,
+            email,
+            hashedPassword,
+            phone,
+            role
+        });
+
         await user.save();
         res.location(`/auth/${user._id}`)
         const userAfficher = user.toObject();
