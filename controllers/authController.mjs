@@ -95,7 +95,7 @@ export async function getProfile(req, res, next){
     const user = await User.findOne({email: req.user.email});
     res.status(200).json({
             status: 200,
-            message : "Compte utilisateur créer avec succès",
+            message : "Compte récupéré avec succès",
             path: req.originalUrl,
             timestamp: new Date().toISOString(),
             data: {
@@ -111,7 +111,45 @@ export async function getProfile(req, res, next){
         });
 }
 
-export async function updateProfile(req, res){
+export async function updateProfile(req, res, next){
+    const {firstName, lastName, phone, role} = req.body;
+    const authHeader = req.get("Authorization");
+    const token = authHeader.split(" ")[1];
+    let decodeToken;
+    decodeToken = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decodeToken;
+    const id = req.user.id;
+    try{
+        const user = await User.findByIdAndUpdate(
+            id, 
+            {
+                firstName,
+                lastName, 
+                phone, 
+                role 
+            }, 
+            {new: true}
+        );
+
+        if (user){
+            res.status(200).json({
+                status: 200,
+                path: req.originalUrl,
+                timestamp: new Date().toISOString(),
+                message : "L'utilisateur a été mis a jours avec succees",
+                data: user
+            });
+        }
+        else{
+            const error = new Error(`L'utilisateur avec l'id : ${id} est introuvable`);
+            error.statusCode = 404;
+
+            throw error;
+        }
+    }
+    catch(err){
+        next(err);
+    }
 }
 
 export async function updatePassword(req, res){

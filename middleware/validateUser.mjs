@@ -70,3 +70,19 @@ export const validateLogin = async (req, res, next) => {
     }
     next();
 }
+
+export const validatePut = async (req, res, next) => {
+    const {firstName, lastName, phone, role} = req.body;
+    if(!firstName || !lastName || !phone || !role){
+        const error = new Error("firstname, lastname, phone et role sont requis");
+        error.statusCode = 400;
+        return next(error);
+    }
+    
+    if(!stringEstValide(firstName) || !stringEstValide(lastName)){
+        const error = new Error("Paramêtre invalide");
+        error.statusCode = 422;
+        return next(error);
+    }
+    next();
+}
