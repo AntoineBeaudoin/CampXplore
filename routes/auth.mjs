@@ -13,6 +13,6 @@ routeur.get("/profile", isAuth, authController.getProfile);
 
 routeur.put("/profile", isAuth, validateUser.validatePut, authController.updateProfile);
 
-routeur.patch("/password", authController.updatePassword);
+routeur.patch("/password", isAuth, validateUser.validatePatch, authController.updatePassword);
 
 export default routeur;

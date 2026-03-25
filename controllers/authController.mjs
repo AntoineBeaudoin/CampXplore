@@ -143,7 +143,35 @@ export async function updateProfile(req, res, next){
     }
 }
 
-export async function updatePassword(req, res){
+export async function updatePassword(req, res, next){
+    const {newPassword} = req.body;
+    req.user = obtenirInfoToken(req);
+    const id = req.user.id;
+    try{
+        const hashedPassword = await bcrypt.hash(newPassword, 12);
+        const user = await User.findByIdAndUpdate(
+            id,
+            { password: hashedPassword },
+            { new: true }
+        );
+        if (user){
+            res.status(200).json({
+                status: 200,
+                path: req.originalUrl,
+                timestamp: new Date().toISOString(),
+                message : "L'utilisateur a été mis a jours avec succees",
+                data: user
+            });
+        }
+        else{
+            const error = new Error(`L'utilisateur avec l'id : ${id} est introuvable`);
+            error.statusCode = 404;
+            throw error;
+        }
+    }
+    catch(err){
+        next(err);
+    }
 }
 
 function obtenirInfoToken(req){

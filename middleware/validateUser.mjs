@@ -1,5 +1,9 @@
 import User from "../models/user.mjs";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
+dotenv.config();
 const stringEstValide = (v) => {
     return typeof(v) === "string" && v.trim().length > 0;
 };
@@ -85,4 +89,35 @@ export const validatePut = async (req, res, next) => {
         return next(error);
     }
     next();
+}
+
+export const validatePatch = async (req, res, next) => {
+    const {currentPassword, newPassword} = req.body;
+    if(!currentPassword || !newPassword){
+        const error = new Error("Mot de passe et nouveau mot de passe sont requis");
+        error.statusCode = 400;
+        return next(error);
+    }
+    const infoUser = obtenirInfoToken(req);
+    const user = await User.findOne({email: infoUser.email}).select("+password");
+    const isEqual = await bcrypt.compare(currentPassword, user.password);
+    if (!mdpValide(newPassword)){
+        const error = new Error("Mot de passe invalide");
+        error.statusCode = 422;
+        return next(error);
+    }
+    if(!isEqual){
+        const error = new Error("Mot de passe actuel invalide");
+        error.statusCode = 401;
+        return next(error);
+    }
+    next();
+}
+
+function obtenirInfoToken(req){
+    const authHeader = req.get("Authorization");
+    const token = authHeader.split(" ")[1];
+    let decodeToken;
+    decodeToken = jwt.verify(token, process.env.JWT_SECRET);
+    return decodeToken;
 }
