@@ -2,6 +2,7 @@ import User from "../models/user.mjs";
 import Campsite from "../models/campsite.mjs";
 import Reservation from "../models/reservation.mjs";
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 const seedDatabase = async (req, res) => {
   try {
@@ -63,7 +64,7 @@ const seedDatabase = async (req, res) => {
       lastName: "User",
       email: "admin@campxplore.com",
       phone: "5141234567",
-      password: "Password123!",
+      password: await bcrypt.hash("Password123!", 12),
       role: "admin",
     });
     await admin.save();
@@ -75,7 +76,7 @@ const seedDatabase = async (req, res) => {
         lastName: "User",
         email: "user@campxplore.com",
         phone: "4182345678",
-        password: "Password123!",
+        password: await bcrypt.hash("Password123!", 12)
       },
       {
         _id: userIds[2],
@@ -83,7 +84,7 @@ const seedDatabase = async (req, res) => {
         lastName: "Smith",
         email: "bob@example.com",
         phone: "4183456789",
-        password: "Password123!",
+        password: await bcrypt.hash("Password123!", 12),
       },
       {
         _id: userIds[3],
@@ -91,7 +92,7 @@ const seedDatabase = async (req, res) => {
         lastName: "Brown",
         email: "charlie@example.com",
         phone: "5814567890",
-        password: "Password123!",
+        password: await bcrypt.hash("Password123!", 12),
       },
       {
         _id: userIds[4],
@@ -99,7 +100,7 @@ const seedDatabase = async (req, res) => {
         lastName: "Davis",
         email: "diana@example.com",
         phone: "5815678901",
-        password: "Password123!",
+        password: await bcrypt.hash("Password123!", 12),
       },
       {
         _id: userIds[5],
@@ -107,7 +108,7 @@ const seedDatabase = async (req, res) => {
         lastName: "Wilson",
         email: "eve@example.com",
         phone: "4186789012",
-        password: "Password123!",
+        password: await bcrypt.hash("Password123!", 12),
       },
     ];
 
