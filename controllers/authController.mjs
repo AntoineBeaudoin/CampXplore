@@ -59,7 +59,6 @@ export async function login(req, res, next){
 
         const userAfficher = user.toObject();
         delete userAfficher.password;
-        console.log(user);
         const token = jwt.sign({
                 email: user.email,
                 id: user.id
@@ -87,11 +86,7 @@ export async function login(req, res, next){
 
 
 export async function getProfile(req, res, next){
-    const authHeader = req.get("Authorization");
-    const token = authHeader.split(" ")[1];
-    let decodeToken;
-    decodeToken = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decodeToken;
+    req.user = obtenirInfoToken(req);
     const user = await User.findOne({email: req.user.email});
     res.status(200).json({
             status: 200,
@@ -113,11 +108,7 @@ export async function getProfile(req, res, next){
 
 export async function updateProfile(req, res, next){
     const {firstName, lastName, phone, role} = req.body;
-    const authHeader = req.get("Authorization");
-    const token = authHeader.split(" ")[1];
-    let decodeToken;
-    decodeToken = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decodeToken;
+    req.user = obtenirInfoToken(req);
     const id = req.user.id;
     try{
         const user = await User.findByIdAndUpdate(
@@ -153,4 +144,12 @@ export async function updateProfile(req, res, next){
 }
 
 export async function updatePassword(req, res){
+}
+
+function obtenirInfoToken(req){
+    const authHeader = req.get("Authorization");
+    const token = authHeader.split(" ")[1];
+    let decodeToken;
+    decodeToken = jwt.verify(token, process.env.JWT_SECRET);
+    return decodeToken;
 }
