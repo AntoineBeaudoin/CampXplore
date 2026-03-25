@@ -31,12 +31,14 @@ const userSchema = new mongoose.Schema(
         `${props.value} n'est pas un numéro de téléphone valide! Il doit contenir exactement 10 chiffres.`,
     },
     },
-    password: { type: String },
+    password: { 
+      type: String, 
+      select: false
+    },
     role: {
       type: String,
       enum: ["user", "admin"],
-      default: "user",
-      select: false
+      default: "user"
     }
   },
   { timestamps: true },
