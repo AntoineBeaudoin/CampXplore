@@ -1,4 +1,5 @@
 import User from "../models/user.mjs";
+import bcrypt from "bcrypt";
 
 export async function register(req, res, next){
     const {firstName, lastName, email, password, phone, role} = req.body;
@@ -9,7 +10,7 @@ export async function register(req, res, next){
             firstName,
             lastName,
             email,
-            hashedPassword,
+            password : hashedPassword,
             phone,
             role
         });
