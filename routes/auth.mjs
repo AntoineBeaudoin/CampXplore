@@ -1,6 +1,7 @@
 import express from "express";
 import * as authController from "../controllers/authController.mjs";
-import {validateUserRegister, validateLogin} from "../middleware/validateUser.mjs"
+import {validateUserRegister, validateLogin} from "../middleware/validateUser.mjs";
+import { isAuth } from "../middleware/isAuth.mjs";
 
 const routeur = express.Router();
 
@@ -8,7 +9,7 @@ routeur.post("/register", validateUserRegister, authController.register);
 
 routeur.post("/login", validateLogin, authController.login);
 
-routeur.get("/profile", authController.getProfile);
+routeur.get("/profile", isAuth, authController.getProfile);
 
 routeur.put("/profile", authController.updateProfile);
 

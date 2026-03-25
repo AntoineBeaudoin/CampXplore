@@ -86,7 +86,29 @@ export async function login(req, res, next){
 }
 
 
-export async function getProfile(req, res){
+export async function getProfile(req, res, next){
+    const authHeader = req.get("Authorization");
+    const token = authHeader.split(" ")[1];
+    let decodeToken;
+    decodeToken = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decodeToken;
+    const user = await User.findOne({email: req.user.email});
+    res.status(200).json({
+            status: 200,
+            message : "Compte utilisateur créer avec succès",
+            path: req.originalUrl,
+            timestamp: new Date().toISOString(),
+            data: {
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                phone: user.phone,
+                role: user.role,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt
+            }
+        });
 }
 
 export async function updateProfile(req, res){
