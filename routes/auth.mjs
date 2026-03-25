@@ -1,12 +1,12 @@
 import express from "express";
 import * as authController from "../controllers/authController.mjs";
-import {validateUserRegister} from "../middleware/validateUser.mjs"
+import {validateUserRegister, validateLogin} from "../middleware/validateUser.mjs"
 
 const routeur = express.Router();
 
 routeur.post("/register", validateUserRegister, authController.register);
 
-routeur.post("/login", authController.login);
+routeur.post("/login", validateLogin, authController.login);
 
 routeur.get("/profile", authController.getProfile);
 

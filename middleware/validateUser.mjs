@@ -1,23 +1,22 @@
 import User from "../models/user.mjs";
 
+const stringEstValide = (v) => {
+    return typeof(v) === "string" && v.trim().length > 0;
+};
+
+const mdpValide = (v) => {
+    const contientMajuscule = (str) => /[A-Z]/.test(str);
+    const contientNombre = (str) => /[\d]/.test(str);
+    const contientCharSpeciaux = (str) => /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>?~]/.test(str);
+    const mdpAssezLong = v.length > 10;
+    return contientMajuscule(v) && contientNombre(v) && contientCharSpeciaux(v) && mdpAssezLong;
+};
+
+const courrielValide = (v) => {
+    return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(v);
+}
+
 export const validateUserRegister = async (req, res, next) => {
-
-    const stringEstValide = (v) => {
-        return typeof(v) === "string" && v.trim().length > 0;
-    };
-
-    const mdpValide = (v) => {
-        const contientMajuscule = (str) => /[A-Z]/.test(str);
-        const contientNombre = (str) => /[\d]/.test(str);
-        const contientCharSpeciaux = (str) => /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>?~]/.test(str);
-        const mdpAssezLong = v.length > 10;
-        return contientMajuscule(v) && contientNombre(v) && contientCharSpeciaux(v) && mdpAssezLong;
-    };
-
-    const courrielValide = (v) => {
-        return /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(v);
-    }
-
     const {firstName, lastName, email, password, phone, role} = req.body;
     if(!firstName || !lastName || !email || !password || !phone || !role){
         const error = new Error("firstname, lastname, email, password, phone et role sont requis");
@@ -52,6 +51,22 @@ export const validateUserRegister = async (req, res, next) => {
     }
     catch(err){
         next(err);
+    }
+    next();
+}
+
+export const validateLogin = async (req, res, next) => {
+    const {email, password} = req.body;
+    if(!email || !password){
+        const error = new Error("email et password sont requis");
+        error.statusCode = 400;
+        return next(error);
+    }
+
+    if(!stringEstValide(email) || !stringEstValide(password)){
+        const error = new Error("Paramêtre invalide");
+        error.statusCode = 422;
+        return next(error);
     }
     next();
 }
