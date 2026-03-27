@@ -46,7 +46,7 @@ export async function login(req, res, next){
         if(!user){
             const error = new Error("Courriel ou mot de passe invalide");
             error.statusCode = 401;
-            throw error;
+            next(error);
         }
 
         const isEqual = await bcrypt.compare(password, user.password);
@@ -54,7 +54,7 @@ export async function login(req, res, next){
         if(!isEqual){
             const error = new Error("Courriel ou mot de passe invalide");
             error.statusCode = 401;
-            throw error;
+            next(error);
         }
 
         const userAfficher = user.toObject();
@@ -134,8 +134,7 @@ export async function updateProfile(req, res, next){
         else{
             const error = new Error(`L'utilisateur avec l'id : ${id} est introuvable`);
             error.statusCode = 404;
-
-            throw error;
+            next(error);
         }
     }
     catch(err){
@@ -166,7 +165,7 @@ export async function updatePassword(req, res, next){
         else{
             const error = new Error(`L'utilisateur avec l'id : ${id} est introuvable`);
             error.statusCode = 404;
-            throw error;
+            next(error);
         }
     }
     catch(err){
