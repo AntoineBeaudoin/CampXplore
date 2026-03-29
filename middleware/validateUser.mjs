@@ -1,12 +1,9 @@
 import User from "../models/user.mjs";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import * as utils from "../utils.mjs";
 
 dotenv.config();
-const stringEstValide = (v) => {
-    return typeof(v) === "string" && v.trim().length > 0;
-};
 
 const mdpValide = (v) => {
     const contientMajuscule = (str) => /[A-Z]/.test(str);
@@ -28,7 +25,7 @@ export const validateUserRegister = async (req, res, next) => {
         return next(error);
     }
     
-    if(!stringEstValide(firstName) || !stringEstValide(lastName) || !stringEstValide(email) || !stringEstValide(password)){
+    if(!utils.listeDeStringEstValide([firstName, lastName, email, password])){
         const error = new Error("Paramêtre invalide");
         error.statusCode = 422;
         return next(error);
@@ -67,7 +64,7 @@ export const validateLogin = async (req, res, next) => {
         return next(error);
     }
 
-    if(!stringEstValide(email) || !stringEstValide(password)){
+    if(!utils.listeDeStringEstValide([email, password])){
         const error = new Error("Paramêtre invalide");
         error.statusCode = 422;
         return next(error);
@@ -83,7 +80,7 @@ export const validatePut = async (req, res, next) => {
         return next(error);
     }
     
-    if(!stringEstValide(firstName) || !stringEstValide(lastName)){
+    if(!utils.listeDeStringEstValide([firstName, lastName])){
         const error = new Error("Paramêtre invalide");
         error.statusCode = 422;
         return next(error);
@@ -98,7 +95,7 @@ export const validatePatch = async (req, res, next) => {
         error.statusCode = 400;
         return next(error);
     }
-    const infoUser = obtenirInfoToken(req);
+    const infoUser = utils.obtenirInfoToken(req);
     const user = await User.findOne({email: infoUser.email}).select("+password");
     const isEqual = await bcrypt.compare(currentPassword, user.password);
     if (!mdpValide(newPassword)){
@@ -112,12 +109,4 @@ export const validatePatch = async (req, res, next) => {
         return next(error);
     }
     next();
-}
-
-function obtenirInfoToken(req){
-    const authHeader = req.get("Authorization");
-    const token = authHeader.split(" ")[1];
-    let decodeToken;
-    decodeToken = jwt.verify(token, process.env.JWT_SECRET);
-    return decodeToken;
 }

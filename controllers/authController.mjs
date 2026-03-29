@@ -2,6 +2,7 @@ import User from "../models/user.mjs";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import * as utils from "../utils.mjs";
 
 dotenv.config();
 
@@ -86,7 +87,7 @@ export async function login(req, res, next){
 
 
 export async function getProfile(req, res, next){
-    req.user = obtenirInfoToken(req);
+    req.user = utils.obtenirInfoToken(req);
     const user = await User.findOne({email: req.user.email});
     res.status(200).json({
             status: 200,
@@ -108,7 +109,7 @@ export async function getProfile(req, res, next){
 
 export async function updateProfile(req, res, next){
     const {firstName, lastName, phone, role} = req.body;
-    req.user = obtenirInfoToken(req);
+    req.user = utils.obtenirInfoToken(req);
     const id = req.user.id;
     try{
         const user = await User.findByIdAndUpdate(
@@ -144,7 +145,7 @@ export async function updateProfile(req, res, next){
 
 export async function updatePassword(req, res, next){
     const {newPassword} = req.body;
-    req.user = obtenirInfoToken(req);
+    req.user = utils.obtenirInfoToken(req);
     const id = req.user.id;
     try{
         const hashedPassword = await bcrypt.hash(newPassword, 12);
@@ -171,12 +172,4 @@ export async function updatePassword(req, res, next){
     catch(err){
         next(err);
     }
-}
-
-function obtenirInfoToken(req){
-    const authHeader = req.get("Authorization");
-    const token = authHeader.split(" ")[1];
-    let decodeToken;
-    decodeToken = jwt.verify(token, process.env.JWT_SECRET);
-    return decodeToken;
 }
