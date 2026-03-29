@@ -1,3 +1,4 @@
+import User from "../CampXplore/models/user.mjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
@@ -23,4 +24,10 @@ export function obtenirInfoToken(req){
     let decodeToken;
     decodeToken = jwt.verify(token, process.env.JWT_SECRET);
     return decodeToken;
+}
+
+export async function esAdmin(req){
+    const userToken = obtenirInfoToken(req);
+    const user = await User.findOne({email: userToken.email})
+    return user?.role === "admin";
 }
