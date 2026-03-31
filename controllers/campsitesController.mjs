@@ -5,7 +5,6 @@ export async function ajoutCampsite(req, res, next){
     try{
         const campsite = new Campsite({name, location, description, 
             type, pricePerNight, capacity, amenities});
-        console.log(campsite);
         await campsite.save();
         res.location(`/auth/${campsite._id}`)
         res.status(201).json({
@@ -14,6 +13,7 @@ export async function ajoutCampsite(req, res, next){
             path: req.originalUrl,
             timestamp: new Date().toISOString(),
             data: {
+                _id: campsite._id,
                 name: campsite.name,
                 location: campsite.location,
                 description: campsite.description,
