@@ -1,6 +1,8 @@
 import Campsite from "../models/campsite.mjs";
 import * as utils from "../utils.mjs";
 
+const regexIdMongoDB = /[a-fA-F0-9]{24}/;
+
 export const validateAddNewCampsite = async (req, res, next) => {
     if(!await utils.esAdmin(req)){
         const error = new Error("Vous n'avez pas l'autentification nécessaire");
@@ -40,6 +42,16 @@ export const validateAddNewCampsite = async (req, res, next) => {
             error.statusCode = 422;
             return next(error);
         }
+    }
+    next();
+}
+
+export const validateFindById = async (req, res, next) => {
+    const id = req.params.id;
+    if(!regexIdMongoDB.test(id)){
+        const error = new Error("L'id ne respecte pas le format des id de mongoDB");
+        error.statusCode = 400;
+        return next(error);
     }
     next();
 }

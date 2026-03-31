@@ -46,6 +46,27 @@ export async function getLesCampings(req, res, next){
 }
 
 export async function getCampingViaId(req, res, next){
+    const id = req.params.id;
+    try{
+        const campsite = await Campsite.findById(id);
+        if(campsite){
+            res.status(200).json({
+                status: 200,
+                message : "Campsite récupéré avec succès",
+                path: req.originalUrl,
+                timestamp: new Date().toISOString(),
+                data: campsite
+            });
+        }
+        else{
+            const error = new Error(`Le campsite d'id ${id} n'a pas été trouvé`);
+            error.statusCode = 404;
+            return next(error);
+        }
+    }
+    catch(err){
+        next(err);
+    }
 }
 
 export async function rechercherCamping(req, res, next){
