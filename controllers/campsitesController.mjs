@@ -30,6 +30,19 @@ export async function ajoutCampsite(req, res, next){
 }
 
 export async function getLesCampings(req, res, next){
+    try{
+        const campsites = await Campsite.find();
+        res.status(200).json({
+            status: 200,
+            message : "Liste de campsite trouvés",
+            path: req.originalUrl,
+            timestamp: new Date().toISOString(),
+            data: campsites
+        });
+    }
+    catch(err){
+        next(err);
+    }
 }
 
 export async function getCampingViaId(req, res, next){
