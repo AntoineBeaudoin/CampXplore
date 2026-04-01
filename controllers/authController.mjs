@@ -62,7 +62,7 @@ export async function login(req, res, next){
         delete userAfficher.password;
         const token = jwt.sign({
                 email: user.email,
-                id: user.id
+                id: user._id
             },
             process.env.JWT_SECRET,
             {
@@ -71,7 +71,7 @@ export async function login(req, res, next){
         );
         res.status(200).json({
             status: 200,
-            message : "Compte utilisateur créer avec succès",
+            message : "Connexion effectué avec succès",
             path: req.originalUrl,
             timestamp: new Date().toISOString(),
             data: {
