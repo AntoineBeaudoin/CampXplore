@@ -3,6 +3,16 @@ import * as utils from "../utils.mjs";
 
 const regexIdMongoDB = /[a-fA-F0-9]{24}/;
 
+export const validateFiltre = async (req, res, next) => {
+    const {type} = req.query;
+    if(type && !Campsite.schema.path("type").enumValues.includes(type)){
+        const error = new Error("Le type du camping doit être un des suivants: tente, rv, chalet, glamping, arrière-pays ou autre");
+        error.statusCode = 422;
+        return next(error);
+    }
+    next();
+}
+
 export const validateAddNewCampsite = async (req, res, next) => {
     if(!await utils.esAdmin(req)){
         const error = new Error("Vous n'avez pas l'autentification nécessaire");

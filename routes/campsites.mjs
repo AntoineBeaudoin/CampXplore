@@ -7,7 +7,7 @@ const routeur = express.Router();
 
 routeur.post("/", isAuth, validateCampsite.validateAddNewCampsite ,campsitesController.ajoutCampsite);
 
-routeur.get("/", campsitesController.getLesCampings);
+routeur.get("/", validateCampsite.validateFiltre, campsitesController.getLesCampings);
 
 routeur.get("/available", campsitesController.rechercherCamping);
 

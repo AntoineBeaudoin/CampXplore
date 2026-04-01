@@ -34,8 +34,15 @@ export async function ajoutCampsite(req, res, next){
 }
 
 export async function getLesCampings(req, res, next){
+    const {type} = req.query;
     try{
-        const campsites = await Campsite.find();
+        let campsites = null;
+        if (type){
+            campsites = await Campsite.find({type: type});
+        }
+        else{
+            campsites = await Campsite.find();
+        }
         res.status(200).json({
             status: 200,
             message : "Liste de campsite trouvés",
