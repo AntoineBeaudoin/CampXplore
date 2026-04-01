@@ -1,4 +1,8 @@
 import Campsite from "../models/campsite.mjs";
+import Reservation from "../models/reservation.mjs";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export async function ajoutCampsite(req, res, next){
     const {name, location, description, type, pricePerNight, capacity, amenities} = req.body;
@@ -70,6 +74,43 @@ export async function getCampingViaId(req, res, next){
 }
 
 export async function rechercherCamping(req, res, next){
+    const {startDate, endDate, type, guests, vehicleLength} = req.query;
+    try{
+        const reservations = await Reservation.find({startDate: { $lt: endDate}, endDate: { $gt: startDate}});
+        const idsCampsites = reservations.map(r => r.campsite._id)
+        let campsites = null;
+        if(type){
+            if(type === "rv" && vehicleLength){
+                campsites = await Campsite.find({_id: {$nin: idsCampsites}, type: type, maxVehicleLength: {$gte: vehicleLength}});
+            }
+            else{
+                campsites = await Campsite.find({_id: {$nin: idsCampsites}, type: type});
+            }
+        }
+        if(guests){
+            campsites = await Campsite.find({_id: {$nin: idsCampsites}, capacity: {$gte: guests}});
+        }
+        if(campsites === null){
+            campsites = await Campsite.find({_id: {$nin: idsCampsites}});
+        }
+        if(campsites){
+            res.status(200).json({
+                status: 200,
+                message : "Campsite récupéré avec succès",
+                path: req.originalUrl,
+                timestamp: new Date().toISOString(),
+                data: campsites
+            });
+        }
+        else{
+            const error = new Error(`Aucun campsites trouvés`);
+            error.statusCode = 404;
+            return next(error);
+        }
+    }
+    catch(err){
+        next(err);
+    }
 }
 
 export async function majCamping(req, res, next){

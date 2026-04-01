@@ -9,9 +9,9 @@ routeur.post("/", isAuth, validateCampsite.validateAddNewCampsite ,campsitesCont
 
 routeur.get("/", campsitesController.getLesCampings);
 
-routeur.get("/:id", isAuth, validateCampsite.validateFindById, campsitesController.getCampingViaId);
-
 routeur.get("/available", campsitesController.rechercherCamping);
+
+routeur.get("/:id", validateCampsite.validateFindById, campsitesController.getCampingViaId);
 
 routeur.put("/:id", campsitesController.majCamping);
 
