@@ -14,6 +14,24 @@ export const validateFiltre = async (req, res, next) => {
 }
 
 export const validateAddNewCampsite = async (req, res, next) => {
+    await validerPropsCamping(req, res, next);
+}
+
+export const validateFindById = async (req, res, next) => {
+    const id = req.params.id;
+    if(!regexIdMongoDB.test(id)){
+        const error = new Error("L'id ne respecte pas le format des id de mongoDB");
+        error.statusCode = 400;
+        return next(error);
+    }
+    next();
+}
+
+export const validerMAJCampsite = async (req, res, next) => {
+    await validerPropsCamping(req, res, next);
+}
+
+const validerPropsCamping = async (req, res, next) => {
     if(!await utils.esAdmin(req)){
         const error = new Error("Vous n'avez pas l'autentification nécessaire");
         error.statusCode = 403;
@@ -35,11 +53,6 @@ export const validateAddNewCampsite = async (req, res, next) => {
         error.statusCode = 422;
         return next(error);
     }
-    if ((await Campsite.find({name: name, location: location})).length == 1){
-        const error = new Error("Ce camping existe déjà");
-        error.statusCode = 409;
-        return next(error);
-    }
     if(!Campsite.schema.path("type").enumValues.includes(type)){
         const error = new Error("Le type du camping doit être un des suivants: tente, rv, chalet, glamping, arrière-pays ou autre");
         error.statusCode = 422;
@@ -52,15 +65,15 @@ export const validateAddNewCampsite = async (req, res, next) => {
             error.statusCode = 422;
             return next(error);
         }
+        if (!maxVehicleLength){
+            const error = new Error("Le maxVehicleLength doit être inclus lorsque le type de camping est rv");
+            error.statusCode = 400;
+            return next(error);
+        }
     }
-    next();
-}
-
-export const validateFindById = async (req, res, next) => {
-    const id = req.params.id;
-    if(!regexIdMongoDB.test(id)){
-        const error = new Error("L'id ne respecte pas le format des id de mongoDB");
-        error.statusCode = 400;
+    if ((await Campsite.find({name: name, location: location})).length == 1){
+        const error = new Error("Ce camping existe déjà");
+        error.statusCode = 409;
         return next(error);
     }
     next();

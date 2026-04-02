@@ -13,7 +13,7 @@ routeur.get("/available", campsitesController.rechercherCamping);
 
 routeur.get("/:id", validateCampsite.validateFindById, campsitesController.getCampingViaId);
 
-routeur.put("/:id", campsitesController.majCamping);
+routeur.put("/:id", isAuth, validateCampsite.validerMAJCampsite, campsitesController.majCamping);
 
 routeur.delete("/:id", campsitesController.delCamping);
 

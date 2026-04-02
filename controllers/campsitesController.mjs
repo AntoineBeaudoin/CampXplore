@@ -121,6 +121,41 @@ export async function rechercherCamping(req, res, next){
 }
 
 export async function majCamping(req, res, next){
+    const id = req.params.id;
+    const {name, location, description, type, pricePerNight, capacity, amenities} = req.body;
+    try{
+        const campsite = await Campsite.findByIdAndUpdate(
+            id, 
+            {
+                name, 
+                location, 
+                description, 
+                type, 
+                pricePerNight, 
+                capacity, 
+                amenities
+            }, 
+            {new: true}
+        );
+
+        if (campsite){
+            res.status(200).json({
+                status: 200,
+                path: req.originalUrl,
+                timestamp: new Date().toISOString(),
+                message : "Le campsite a été mis à jours avec succees",
+                data: campsite
+            });
+        }
+        else{
+            const error = new Error(`Le campsite avec l'id : ${id} est introuvable`);
+            error.statusCode = 404;
+            next(error);
+        }
+    }
+    catch(err){
+        next(err);
+    }
 }
 
 export async function delCamping(req, res, next){
