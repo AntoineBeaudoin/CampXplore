@@ -15,6 +15,6 @@ routeur.get("/:id", validateCampsite.validateFindById, campsitesController.getCa
 
 routeur.put("/:id", isAuth, validateCampsite.validerMAJCampsite, campsitesController.majCamping);
 
-routeur.delete("/:id", campsitesController.delCamping);
+routeur.delete("/:id", isAuth, validateCampsite.validateDeleteCampsite, campsitesController.delCamping);
 
 export default routeur;

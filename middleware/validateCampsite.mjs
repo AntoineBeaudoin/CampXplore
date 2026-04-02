@@ -31,6 +31,15 @@ export const validerMAJCampsite = async (req, res, next) => {
     await validerPropsCamping(req, res, next);
 }
 
+export const validateDeleteCampsite = async (req, res, next) => {
+    if(!await utils.esAdmin(req)){
+        const error = new Error("Vous n'avez pas l'autentification nécessaire");
+        error.statusCode = 403;
+        return next(error);
+    }
+    next();
+}
+
 const validerPropsCamping = async (req, res, next) => {
     if(!await utils.esAdmin(req)){
         const error = new Error("Vous n'avez pas l'autentification nécessaire");

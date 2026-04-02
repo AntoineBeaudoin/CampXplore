@@ -143,7 +143,7 @@ export async function majCamping(req, res, next){
                 status: 200,
                 path: req.originalUrl,
                 timestamp: new Date().toISOString(),
-                message : "Le campsite a été mis à jours avec succees",
+                message : "Le campsite a été mis à jours avec succèes",
                 data: campsite
             });
         }
@@ -159,4 +159,23 @@ export async function majCamping(req, res, next){
 }
 
 export async function delCamping(req, res, next){
+    const id = req.params.id;
+    try{
+        const reservations = await Reservation.find({campsite : id});
+        if (reservations.length !== 0){
+            const error = new Error(`Le campsite avec l'id : ${id} a des réservations`);
+            error.statusCode = 409;
+            return next(error);
+        }
+        await Campsite.findByIdAndDelete(id); 
+        res.status(204).json({
+                status: 204,
+                path: req.originalUrl,
+                timestamp: new Date().toISOString(),
+                message : "Le campsite a été supprimé avec succèes"
+            });
+    }
+    catch(err){
+        next(err);
+    }
 }
