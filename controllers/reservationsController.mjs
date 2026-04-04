@@ -6,16 +6,8 @@ export async function ajoutReservation(req, res, next){
     const {campsite, startDate, endDate, guests} = req.body
     const dateDebut = new Date(startDate);
     const dateFin = new Date(endDate);
-    req.user = utils.obtenirInfoToken(req);
-    const userId = req.user.id;
     try{
-        const campsiteSelectionne = await Campsite.findById(campsite);
-        const nombreJours = differenceDates(dateDebut, dateFin)
-        const coutTotal = campsiteSelectionne.pricePerNight * nombreJours;
-        const reservation = new Reservation({
-            user: userId, campsite: campsite, startDate: dateDebut,
-            endDate: dateFin, guests: guests, totalPrice: coutTotal});
-        await reservation.save();
+        const reservation = await creerReservation(campsite, dateDebut, dateFin, guests, req);
 
         res.status(201).location(`/api/reservations/${reservation._id}`).json({
             status: 201,
@@ -90,4 +82,17 @@ export async function majStatutReservation(req, res, next){
 function differenceDates(startDate, endDate){
     const diffTemps = Math.abs(endDate - startDate);
     return Math.floor(diffTemps / (1000 * 60 * 60 * 24));
+}
+
+const creerReservation = async (campsite, dateDebut, dateFin, guests, req) => {
+    req.user = utils.obtenirInfoToken(req);
+    const userId = req.user.id;
+    const campsiteSelectionne = await Campsite.findById(campsite);
+    const nombreJours = differenceDates(dateDebut, dateFin)
+    const coutTotal = campsiteSelectionne.pricePerNight * nombreJours;
+    const reservation = new Reservation({
+        user: userId, campsite: campsite, startDate: dateDebut,
+        endDate: dateFin, guests: guests, totalPrice: coutTotal});
+    await reservation.save();
+    return reservation;
 }
