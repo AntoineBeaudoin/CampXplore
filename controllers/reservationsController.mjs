@@ -65,6 +65,20 @@ export async function getReservations(req, res, next){
 }
 
 export async function getReservationsViaId(req, res, next){
+    const id = req.params.id;
+    try{
+        const reservation = await Reservation.findById(id);
+        res.status(200).json({
+            status: 200,
+            message : "Réservations de l'utilisateur",
+            path: req.originalUrl,
+            timestamp: new Date().toISOString(),
+            data: reservation
+        });
+    }
+    catch(err){
+        next(err);
+    }
 }
 
 export async function majReservation(req, res, next){

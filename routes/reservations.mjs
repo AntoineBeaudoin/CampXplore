@@ -9,7 +9,7 @@ routeur.post("/", isAuth, validateRservation.validateAjoutReservation, reservati
 
 routeur.get("/", isAuth, validateRservation.validateGetReservation, reservationsController.getReservations);
 
-routeur.get("/:id", isAuth, reservationsController.getReservationsViaId);
+routeur.get("/:id", isAuth, validateRservation.validateReservationProprietaireOuAdmin, reservationsController.getReservationsViaId);
 
 routeur.put("/:id", isAuth, reservationsController.majReservation);
 
