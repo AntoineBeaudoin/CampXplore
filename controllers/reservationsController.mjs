@@ -8,7 +8,6 @@ export async function ajoutReservation(req, res, next){
     const dateFin = new Date(endDate);
     try{
         const reservation = await creerReservation(campsite, dateDebut, dateFin, guests, req);
-
         res.status(201).location(`/api/reservations/${reservation._id}`).json({
             status: 201,
             message : "Réservation créer avec succès",
@@ -135,7 +134,7 @@ function differenceDates(startDate, endDate){
  * @returns Retourne un objet réservation une fois que celui-ci a été ajouté à la BD
  */
 const creerReservation = async (campsite, dateDebut, dateFin, guests, req) => {
-    const {userId, coutTotal} = obtenirInfoPourReservation(campsite, dateDebut, dateFin, req);
+    const {userId, coutTotal} = await obtenirInfoPourReservation(campsite, dateDebut, dateFin, req);
     const reservation = new Reservation({
         user: userId, campsite: campsite, startDate: dateDebut,
         endDate: dateFin, guests: guests, totalPrice: coutTotal});
