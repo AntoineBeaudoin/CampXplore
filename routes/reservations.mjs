@@ -7,7 +7,7 @@ const routeur = express.Router();
 
 routeur.post("/", isAuth, validateRservation.validateAjoutReservation, reservationsController.ajoutReservation);
 
-routeur.get("/", isAuth, reservationsController.getReservations);
+routeur.get("/", isAuth, validateRservation.validateGetReservation, reservationsController.getReservations);
 
 routeur.get("/:id", isAuth, reservationsController.getReservationsViaId);
 

@@ -40,6 +40,28 @@ export async function ajoutReservation(req, res, next){
 }
 
 export async function getReservations(req, res, next){
+    req.user = utils.obtenirInfoToken(req);
+    const userId = req.user.id;
+    const {status} = req.query;
+    try{
+        let reservations = "";
+        if (status){
+            reservations = await Reservation.find({user: userId, status: status});
+        }
+        else{
+            reservations = await Reservation.find({user: userId});
+        }
+        res.status(200).json({
+            status: 200,
+            message : "Réservations de l'utilisateur",
+            path: req.originalUrl,
+            timestamp: new Date().toISOString(),
+            data: reservations
+        });
+    }
+    catch(err){
+        next(err);
+    }
 }
 
 export async function getReservationsViaId(req, res, next){
