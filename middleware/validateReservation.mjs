@@ -84,7 +84,7 @@ export const validateAutoriserAModifierReservation = async (req, res, next) => {
         if (!reservation){
             const error = new Error(`La réservation avec l'id : ${id} est introuvable`);
             error.statusCode = 404;
-            next(error);
+            return next(error);
         }
     } 
     catch (err){
