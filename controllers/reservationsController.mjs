@@ -99,6 +99,25 @@ export async function majReservation(req, res, next){
 }
 
 export async function majStatutReservation(req, res, next){
+    const id = req.params.id;
+    const {status} = req.body;
+    try{
+        const reservation = await Reservation.findByIdAndUpdate(
+            id,
+            { status: status },
+            { new: true }
+        );
+        res.status(200).json({
+            status: 200,
+            path: req.originalUrl,
+            timestamp: new Date().toISOString(),
+            message : "La réservation a été mis à jours avec succèes",
+            data: reservation
+        });
+    }
+    catch(err){
+       next(err); 
+    }
 }
 
 function differenceDates(startDate, endDate){

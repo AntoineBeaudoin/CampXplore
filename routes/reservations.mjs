@@ -13,6 +13,6 @@ routeur.get("/:id", isAuth, validateRservation.validateReservationProprietaireOu
 
 routeur.put("/:id", isAuth, reservationsController.majReservation);
 
-routeur.patch("/:id", isAuth, reservationsController.majStatutReservation);
+routeur.patch("/:id", isAuth, validateRservation.validateAutoriserAModifierReservation, validateRservation.validateReservationProprietaireOuAdmin, reservationsController.majStatutReservation);
 
 export default routeur;

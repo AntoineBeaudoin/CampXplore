@@ -3,6 +3,7 @@ import Reservation from "../models/reservation.mjs";
 import dotenv from "dotenv";
 import * as utils from "../utils.mjs";
 import User from "../models/user.mjs";
+import reservation from "../models/reservation.mjs";
 
 dotenv.config();
 
@@ -69,4 +70,34 @@ export const validateReservationProprietaireOuAdmin = async (req, res, next) => 
     next();
 }
 
-// (!await utils.esAdmin(req))
+export const validateAutoriserAModifierReservation = async (req, res, next) => {
+    const id = req.params.id;
+    const {status} = req.body;
+    let reservation = "";
+    if(!Reservation.schema.path("status").enumValues.includes(status)){
+        const error = new Error("Le status du camping doit être un des suivants: pending, confirmed ou cancelled");
+        error.statusCode = 422;
+        return next(error);
+    }
+    try {
+        reservation = await Reservation.findById(id);
+        if (!reservation){
+            const error = new Error(`La réservation avec l'id : ${id} est introuvable`);
+            error.statusCode = 404;
+            next(error);
+        }
+    } 
+    catch (err){
+        return next(err);
+    }
+    const premiereJourneeReservation = new Date(reservation.startDate).getTime();
+    if(status === "cancelled" && premiereJourneeReservation > Date.now()){
+        return next();
+    }
+    if(!await utils.esAdmin(req) && reservation.status !== "pending"){
+        const error = new Error("Vous devez être un administrateur pour modifier une réservation qui n'est pas pending");
+        error.statusCode = 400;
+        next(error);
+    }
+    next();
+}
