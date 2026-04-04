@@ -159,7 +159,7 @@ export async function updatePassword(req, res, next){
                 status: 200,
                 path: req.originalUrl,
                 timestamp: new Date().toISOString(),
-                message : "L'utilisateur a été mis à jours avec succees",
+                message : "L'utilisateur a été mis à jours avec succèes",
                 data: user
             });
         }
