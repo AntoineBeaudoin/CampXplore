@@ -1,16 +1,17 @@
 import express from "express";
 import * as reservationsController from "../controllers/reservationsController.mjs";
+import { isAuth } from "../middleware/isAuth.mjs";
 
 const routeur = express.Router();
 
-routeur.post("/", reservationsController.ajoutReservation);
+routeur.post("/", isAuth, reservationsController.ajoutReservation);
 
-routeur.get("/", reservationsController.getReservations);
+routeur.get("/", isAuth, reservationsController.getReservations);
 
-routeur.get("/:id", reservationsController.getReservationsViaId);
+routeur.get("/:id", isAuth, reservationsController.getReservationsViaId);
 
-routeur.put("/:id", reservationsController.majReservation);
+routeur.put("/:id", isAuth, reservationsController.majReservation);
 
-routeur.patch("/:id", reservationsController.majStatutReservation);
+routeur.patch("/:id", isAuth, reservationsController.majStatutReservation);
 
 export default routeur;
