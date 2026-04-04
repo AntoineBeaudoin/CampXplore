@@ -74,6 +74,28 @@ export async function getReservationsViaId(req, res, next){
 }
 
 export async function majReservation(req, res, next){
+    const idReservation = req.params.id;
+    const {campsite, startDate, endDate, guests} = req.body
+    const dateDebut = new Date(startDate);
+    const dateFin = new Date(endDate);
+    try{
+        const reservation = await mettreAJoursUneReservationById(idReservation, campsite, dateDebut, dateFin, guests, req);
+        if (!reservation){
+            const error = new Error(`Aucune réservation avec l'id ${idReservation} a été trouvé`);
+            error.statusCode = 404;
+            return next(error);
+        }
+        res.status(200).json({
+            status: 200,
+            message : "Réservations de l'utilisateur mis a jours avec succès",
+            path: req.originalUrl,
+            timestamp: new Date().toISOString(),
+            data: reservation
+        });
+    }
+    catch(err){
+        next(err);
+    }
 }
 
 export async function majStatutReservation(req, res, next){
@@ -84,15 +106,64 @@ function differenceDates(startDate, endDate){
     return Math.floor(diffTemps / (1000 * 60 * 60 * 24));
 }
 
+/**
+ * Créer un objet réservation, le sauvegarde et retourne l'objet sauvegardé
+ * @param {*} campsite Id du campsite lié à la réservation
+ * @param {*} dateDebut Date de début de la réservation
+ * @param {*} dateFin Date de fin de la réservation
+ * @param {*} guests Nombre d'invités
+ * @param {*} req La req
+ * @returns Retourne un objet réservation une fois que celui-ci a été ajouté à la BD
+ */
 const creerReservation = async (campsite, dateDebut, dateFin, guests, req) => {
+    const {userId, coutTotal} = obtenirInfoPourReservation(campsite, dateDebut, dateFin, req);
+    const reservation = new Reservation({
+        user: userId, campsite: campsite, startDate: dateDebut,
+        endDate: dateFin, guests: guests, totalPrice: coutTotal});
+    await reservation.save();
+    return reservation;
+}
+
+/**
+ * Recherche et retourne les paramêtres manquants pour créer une réservation. (id de l'utilisateur et le coût total de la réservation)
+ * @param {*} campsite Id du campsite lié à la réservation
+ * @param {*} dateDebut Date de début de la réservation
+ * @param {*} dateFin Date de fin de la réservation
+ * @param {*} req La req
+ * @returns L'id de l'utilisateur et le coût total de la réservation
+ */
+const obtenirInfoPourReservation = async (campsite, dateDebut, dateFin, req) => {
     req.user = utils.obtenirInfoToken(req);
     const userId = req.user.id;
     const campsiteSelectionne = await Campsite.findById(campsite);
     const nombreJours = differenceDates(dateDebut, dateFin)
     const coutTotal = campsiteSelectionne.pricePerNight * nombreJours;
-    const reservation = new Reservation({
-        user: userId, campsite: campsite, startDate: dateDebut,
-        endDate: dateFin, guests: guests, totalPrice: coutTotal});
-    await reservation.save();
+    return {userId, coutTotal};
+}
+
+/**
+ * Met à jours une réservation grâce aux paramêtres.
+ * @param {*} idReservation Id de la réservation à mettre à jours
+ * @param {*} campsite Id du campsite lié à la réservation
+ * @param {*} dateDebut Date de début de la réservation
+ * @param {*} dateFin Date de fin de la réservation
+ * @param {*} guests Nombre d'invités
+ * @param {*} req La req
+ * @returns Retourne un objet réservation
+ */
+const mettreAJoursUneReservationById = async(idReservation, campsite, dateDebut, dateFin, guests, req) => {
+    const {userId, coutTotal} = await obtenirInfoPourReservation(campsite, dateDebut, dateFin, req);
+    const reservation = await Reservation.findByIdAndUpdate(
+        idReservation, 
+        {
+            user: userId, 
+            campsite: campsite, 
+            startDate: dateDebut,
+            endDate: dateFin, 
+            guests: guests, 
+            totalPrice: coutTotal
+        }, 
+        {new: true}
+    );
     return reservation;
 }
