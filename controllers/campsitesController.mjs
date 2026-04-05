@@ -4,6 +4,12 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+/**
+ * Crée un nouveau campsite et l'ajoute à la base de données
+ * @param {*} req Requête Express (contient les données du campsite dans req.body)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ */
 export async function ajoutCampsite(req, res, next){
     const {name, location, description, type, pricePerNight, capacity, amenities} = req.body;
     try{
@@ -33,6 +39,12 @@ export async function ajoutCampsite(req, res, next){
     }
 }
 
+/**
+ * Retourne les campsites recherchés selon le type de campsite désiré
+ * @param {*} req Requête Express (contient les données du campsite dans req.query)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ */
 export async function getLesCampings(req, res, next){
     const {type} = req.query;
     try{
@@ -56,6 +68,13 @@ export async function getLesCampings(req, res, next){
     }
 }
 
+/**
+ * Retourne un campsite selon son Id passé en paramêtre dans la requête
+ * @param {*} req Requête Express (contient les données du campsite dans req.params)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ * @returns Retourne l'erreur pour éviter l'exécution du reste de la méthode
+ */
 export async function getCampingViaId(req, res, next){
     const id = req.params.id;
     try{
@@ -80,6 +99,13 @@ export async function getCampingViaId(req, res, next){
     }
 }
 
+/**
+ * Retourne les campsites qui correspondent aux champs de recherche spécifié dans le req.query
+ * @param {*} req Requête Express (contient les données du campsite dans req.query)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ * @returns Retourne l'erreur pour éviter l'exécution du reste de la méthode
+ */
 export async function rechercherCamping(req, res, next){
     const {startDate, endDate, type, guests, vehicleLength} = req.query;
     try{
@@ -120,6 +146,12 @@ export async function rechercherCamping(req, res, next){
     }
 }
 
+/**
+ * Trouve et met à jours un campsite selon son Id
+ * @param {*} req Requête Express (contient les données du campsite dans req.params)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ */
 export async function majCamping(req, res, next){
     const id = req.params.id;
     const {name, location, description, type, pricePerNight, capacity, amenities} = req.body;
@@ -158,6 +190,13 @@ export async function majCamping(req, res, next){
     }
 }
 
+/**
+ * Supprime un camping de la BD grâce à son Id
+ * @param {*} req Requête Express (contient les données du campsite dans req.params)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ * @returns Retourne l'erreur pour éviter l'exécution du reste de la méthode
+ */
 export async function delCamping(req, res, next){
     const id = req.params.id;
     try{
