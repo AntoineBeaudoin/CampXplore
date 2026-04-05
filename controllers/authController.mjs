@@ -6,6 +6,12 @@ import * as utils from "../utils.mjs";
 
 dotenv.config();
 
+/**
+ * Crée un nouvel utilisateur et l'ajoute à la base de données
+ * @param {*} req Requête Express (contient les données utilisateur dans req.body)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ */
 export async function register(req, res, next){
     const {firstName, lastName, email, password, phone, role} = req.body;
     try{
@@ -39,6 +45,14 @@ export async function register(req, res, next){
     }
 }
 
+/**
+ * Connecte un utilisateur via son courriel et son mot de passe. 
+ * Crée un Token de Connexion JWT pour son authentification.
+ * @param {*} req Requête Express (contient les données utilisateur dans req.body)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ * @returns Retourne l'erreur pour éviter l'exécution du reste de la méthode
+ */
 export async function login(req, res, next){
     const {email, password} = req.body;
     try{
@@ -85,7 +99,12 @@ export async function login(req, res, next){
     }
 }
 
-
+/**
+ * Retourne le profil de l'utilisateur connecté
+ * @param {*} req Requête Express (contient le token d'authorization dans le req.body)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ */
 export async function getProfile(req, res, next){
     req.user = utils.obtenirInfoToken(req);
     const user = await User.findOne({email: req.user.email});
@@ -107,6 +126,12 @@ export async function getProfile(req, res, next){
         });
 }
 
+/**
+ * Met à jours le profil de l'utilisateur connecté
+ * @param {*} req Requête Express (contient les données utilisateur dans req.body)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ */
 export async function updateProfile(req, res, next){
     const {firstName, lastName, phone, role} = req.body;
     req.user = utils.obtenirInfoToken(req);
@@ -143,6 +168,12 @@ export async function updateProfile(req, res, next){
     }
 }
 
+/**
+ * Met à jours le mot de passe de l'utilisateur connecté
+ * @param {*} req Requête Express (contient les données utilisateur dans req.body)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ */
 export async function updatePassword(req, res, next){
     const {newPassword} = req.body;
     req.user = utils.obtenirInfoToken(req);
