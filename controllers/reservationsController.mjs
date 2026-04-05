@@ -2,6 +2,12 @@ import Reservation from "../models/reservation.mjs";
 import Campsite from "../models/campsite.mjs";
 import * as utils from "../utils.mjs";
 
+/**
+ * Crée une réservation et l'ajoute à la base de données
+ * @param {*} req Requête Express (contient les données utilisateur dans req.body)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ */
 export async function ajoutReservation(req, res, next){
     const {campsite, startDate, endDate, guests} = req.body
     const dateDebut = new Date(startDate);
@@ -30,6 +36,12 @@ export async function ajoutReservation(req, res, next){
     }
 }
 
+/**
+ * Retourne les réservation de l'utilisateur connecté
+ * @param {*} req Requête Express (contient les données d'authentification)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ */
 export async function getReservations(req, res, next){
     req.user = utils.obtenirInfoToken(req);
     const userId = req.user.id;
@@ -55,13 +67,19 @@ export async function getReservations(req, res, next){
     }
 }
 
+/**
+ * Retourne la réservation avec l'Id passé en paramêtre
+ * @param {*} req Requête Express (contient les données de la réservation dans req.params)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ */
 export async function getReservationsViaId(req, res, next){
     const id = req.params.id;
     try{
         const reservation = await Reservation.findById(id);
         res.status(200).json({
             status: 200,
-            message : "Réservations de l'utilisateur",
+            message : `Réservations avec l'id ${id}`,
             path: req.originalUrl,
             timestamp: new Date().toISOString(),
             data: reservation
@@ -72,6 +90,14 @@ export async function getReservationsViaId(req, res, next){
     }
 }
 
+/**
+ * Met à jours la réservation avec l'id passé en paramêtre
+ * @param {*} req Requête Express (contient les données de la réservation dans req.body et 
+ *                l'id de la réservation dans req.params)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ * @returns Retourne l'erreur pour éviter l'exécution du reste de la méthode
+ */
 export async function majReservation(req, res, next){
     const idReservation = req.params.id;
     const {campsite, startDate, endDate, guests} = req.body
@@ -97,6 +123,12 @@ export async function majReservation(req, res, next){
     }
 }
 
+/**
+ * Met à jours le statut d'une réservation et applique le changement dans la BD
+ * @param {*} req Requête Express (contient les données de status dans req.body)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ */
 export async function majStatutReservation(req, res, next){
     const id = req.params.id;
     const {status} = req.body;
@@ -119,6 +151,12 @@ export async function majStatutReservation(req, res, next){
     }
 }
 
+/**
+ * Calcule la différence entre deux dates
+ * @param {*} startDate Date du début
+ * @param {*} endDate Date de fin
+ * @returns Le nombre de jours séparant ces deux dates
+ */
 function differenceDates(startDate, endDate){
     const diffTemps = Math.abs(endDate - startDate);
     return Math.floor(diffTemps / (1000 * 60 * 60 * 24));
