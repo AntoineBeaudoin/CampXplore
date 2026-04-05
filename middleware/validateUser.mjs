@@ -8,7 +8,7 @@ dotenv.config();
 const mdpValide = (v) => {
     const contientMajuscule = (str) => /[A-Z]/.test(str);
     const contientNombre = (str) => /[\d]/.test(str);
-    const contientCharSpeciaux = (str) => /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>?~]/.test(str);
+    const contientCharSpeciaux = (str) => /[@$!%*?&]/.test(str);
     const mdpAssezLong = v.length > 10;
     return contientMajuscule(v) && contientNombre(v) && contientCharSpeciaux(v) && mdpAssezLong;
 };
