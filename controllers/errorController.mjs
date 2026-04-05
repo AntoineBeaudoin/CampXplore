@@ -1,7 +1,17 @@
+/**
+ * Gère les code d'erreur 404
+ * @param {*} req Requête Express
+ * @param {*} res Réponse Express
+ */
 export const get404 = (req, res) => {
     res.status(404).json({message : "Ressource non trouvee", statusCode : 404});
 };
 
+/**
+ * Gère les autres code d'erreur (400, 500, etc.)
+ * @param {*} req Requête Express
+ * @param {*} res Réponse Express
+ */
 export const getErrors = (err, req, res, next) => {
     if(err.kind === "ObjectId" && err.name === "CastError"){
         err.statusCode = 400;
