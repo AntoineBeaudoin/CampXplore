@@ -3,6 +3,13 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+/**
+ * Valide si l'utilisateur est connecté
+ * @param {*} req Requête Express (contient les données de connexion dans "Authorization")
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ * @returns Retourne l'erreur pour éviter l'exécution du reste de la méthode
+ */
 export const isAuth = (req, res, next) => {
     const authHeader = req.get("Authorization");
     if(!authHeader){
