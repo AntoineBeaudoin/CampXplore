@@ -3,6 +3,13 @@ import * as utils from "../utils.mjs";
 
 const regexIdMongoDB = /[a-fA-F0-9]{24}/;
 
+/**
+ * Valide si le type utilisé pour le filtre de campsite est un type valide
+ * @param {*} req Requête Express (contient les données du filtre dans req.query)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ * @returns Retourne l'erreur pour éviter l'exécution du reste de la méthode
+ */
 export const validateFiltre = async (req, res, next) => {
     const {type} = req.query;
     if(type && !Campsite.schema.path("type").enumValues.includes(type)){
@@ -13,10 +20,23 @@ export const validateFiltre = async (req, res, next) => {
     next();
 }
 
+/**
+ * Valide si les paramètres pour l'ajout d'un nouveau campsite sont respectés
+ * @param {*} req Requête Express (contient les données du campsite dans req.body)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ */
 export const validateAddNewCampsite = async (req, res, next) => {
     await validerPropsCamping(req, res, next);
 }
 
+/**
+ * Vérifie si l'id passé en paramètres est un id valide
+ * @param {*} req Requête Express (contient les données du campsite dans req.params)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ * @returns Retourne l'erreur pour éviter l'exécution du reste de la méthode
+ */
 export const validateFindById = async (req, res, next) => {
     const id = req.params.id;
     if(!regexIdMongoDB.test(id)){
@@ -27,10 +47,23 @@ export const validateFindById = async (req, res, next) => {
     next();
 }
 
+/**
+ * Valide si les paramètres pour la mise à jours d'un nouveau campsite sont respectés
+ * @param {*} req Requête Express (contient les données du campsite dans req.body)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ */
 export const validerMAJCampsite = async (req, res, next) => {
     await validerPropsCamping(req, res, next);
 }
 
+/**
+ * Vérifie si l'utilisateur connecté est un administrateur pour effectuer la supression
+ * @param {*} req Requête Express (contient les données de l'utilisateur connecté)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ * @returns Retourne l'erreur pour éviter l'exécution du reste de la méthode
+ */
 export const validateDeleteCampsite = async (req, res, next) => {
     if(!await utils.esAdmin(req)){
         const error = new Error("Vous n'avez pas l'autentification nécessaire");
@@ -40,6 +73,15 @@ export const validateDeleteCampsite = async (req, res, next) => {
     next();
 }
 
+
+/**
+ * Valide si les propriétés d'in campsite sont valide
+ * @param {*} req Requête Express (contient les données du campsite dans req.body 
+ *                et contient les données de l'utilisateur connecté)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ * @returns Retourne l'erreur pour éviter l'exécution du reste de la méthode
+ */
 const validerPropsCamping = async (req, res, next) => {
     if(!await utils.esAdmin(req)){
         const error = new Error("Vous n'avez pas l'autentification nécessaire");
