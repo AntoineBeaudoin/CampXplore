@@ -3,10 +3,16 @@ import Reservation from "../models/reservation.mjs";
 import dotenv from "dotenv";
 import * as utils from "../utils.mjs";
 import User from "../models/user.mjs";
-import reservation from "../models/reservation.mjs";
 
 dotenv.config();
 
+/**
+ * Valide si les paramètres de la réservation sont valides et si le camping n'existe pas déjà.
+ * @param {*} req Requête Express (contient les données de la réservation dans req.body)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ * @returns Retourne l'erreur pour éviter l'exécution du reste de la méthode
+ */
 export const validateAjoutReservation = async (req, res, next) => {
     const {campsite, startDate, endDate, guests} = req.body
     if(new Date(startDate) > new Date(endDate)){
@@ -33,6 +39,13 @@ export const validateAjoutReservation = async (req, res, next) => {
     next();
 }
 
+/**
+ * Valide que le status est passé en paramètre est un paramètre valide
+ * @param {*} req Requête Express (contient les données pour la recherche dans req.query)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ * @returns Retourne l'erreur pour éviter l'exécution du reste de la méthode
+ */
 export const validateGetReservation = async (req, res, next) => {
     const {status} = req.query;
     if(status && !Reservation.schema.path("status").enumValues.includes(status)){
@@ -43,6 +56,13 @@ export const validateGetReservation = async (req, res, next) => {
     next();
 }
 
+/**
+ * Valide si l'utilisateur est le propriétaire de la réservation ou un admin
+ * @param {*} req Requête Express (contient les données de la réservation dans req.body)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ * @returns Retourne l'erreur pour éviter l'exécution du reste de la méthode
+ */
 export const validateReservationProprietaireOuAdmin = async (req, res, next) => {
     const idCampsite = req.params.id;
     req.user = utils.obtenirInfoToken(req);
@@ -70,6 +90,14 @@ export const validateReservationProprietaireOuAdmin = async (req, res, next) => 
     next();
 }
 
+/**
+ * Valide si la modification d'une réservation peut être effectué
+ * @param {*} req Requête Express (contient les données de la réservation dans req.body 
+ *                et l'id de la réservation dans req.params)
+ * @param {*} res Réponse Express
+ * @param {*} next Middleware de gestion des erreurs
+ * @returns Retourne l'erreur pour éviter l'exécution du reste de la méthode
+ */
 export const validateAutoriserAModifierReservation = async (req, res, next) => {
     const id = req.params.id;
     const {status} = req.body;
