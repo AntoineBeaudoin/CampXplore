@@ -20,6 +20,12 @@ app.use("/api/auth", authRoutes);
 app.use("/api/campsites", campsitesRoutes);
 app.use("/api/reservations", reservationsRoutes);
 
+app.get("/", (req, res) => {
+    res.status(200).json({
+        message: "API disponnible"
+    });
+});
+
 app.use("/", get404);
 app.use(getErrors);
 
