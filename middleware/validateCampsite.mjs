@@ -122,7 +122,14 @@ const validerPropsCamping = async (req, res, next) => {
             return next(error);
         }
     }
-    if ((await Campsite.find({name: name, location: location})).length == 1){
+    const { id } = req.params;
+    let existing;
+    if (!id) {
+        existing = await Campsite.findOne({name, location});
+    } else {
+        existing = await Campsite.findOne({name, location, _id: { $ne: id }});
+    }
+    if (existing) {
         const error = new Error("Ce camping existe déjà");
         error.statusCode = 409;
         return next(error);
