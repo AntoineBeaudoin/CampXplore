@@ -8,15 +8,6 @@ const app = express();
 
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log(err));
-
 // Routes
 import dbRoutes from "./routes/db.mjs";
 import authRoutes from "./routes/auth.mjs";
@@ -32,13 +23,16 @@ app.use("/api/reservations", reservationsRoutes);
 app.use("/", get404);
 app.use(getErrors);
 
-mongoose
-    .connect(process.env.DATA_BASE)
-    .then(()=>{
-        app.listen(PORT, () => {
-            console.log(`Le serveur ecoute sur http://localhost:${PORT}`);
-        });
-    })
-    .catch((err) => console.log(err));
+const PORT = process.env.PORT || 3000;
 
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log("MongoDB connected");
+
+    app.listen(PORT, () => {
+      console.log(`Le serveur écoute sur http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => console.log(err));
 export default app;
