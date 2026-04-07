@@ -11,8 +11,8 @@ routeur.get("/", isAuth, validateRservation.validateGetReservation, reservations
 
 routeur.get("/:id", isAuth, validateRservation.validateReservationProprietaireOuAdmin, reservationsController.getReservationsViaId);
 
-routeur.put("/:id", isAuth, reservationsController.majReservation);
+routeur.put("/:id", isAuth, validateRservation.validateReservationProprietaireOuAdmin, reservationsController.majReservation);
 
-routeur.patch("/:id", isAuth, validateRservation.validateAutoriserAModifierReservation, validateRservation.validateReservationProprietaireOuAdmin, reservationsController.majStatutReservation);
+routeur.patch("/:id", isAuth, validateRservation.validateReservationProprietaireOuAdmin, validateRservation.validateAutoriserAModifierReservation, reservationsController.majStatutReservation);
 
 export default routeur;

@@ -79,7 +79,7 @@ export const validateReservationProprietaireOuAdmin = async (req, res, next) => 
             if (utilisateur.role !== "admin"){
                 const error = 
                 new Error("Vous ne pouvez pas accèder à une réservation à laquelle vous n'êtes pas propriétaire ou Admin.");
-                error.statusCode = 422;
+                error.statusCode = 403;
                 return next(error);
             }
         }
