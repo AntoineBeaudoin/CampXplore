@@ -32,10 +32,13 @@ app.use("/api/reservations", reservationsRoutes);
 app.use("/", get404);
 app.use(getErrors);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`API available at http://localhost:${PORT}`);
-});
+mongoose
+    .connect(process.env.DATA_BASE)
+    .then(()=>{
+        app.listen(PORT, () => {
+            console.log(`Le serveur ecoute sur http://localhost:${PORT}`);
+        });
+    })
+    .catch((err) => console.log(err));
 
 export default app;
