@@ -1,4 +1,4 @@
-import User from "../CampXplore/models/user.mjs";
+import User from "./models/user.mjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
